@@ -14,7 +14,8 @@
     </h3>
     {#if $username}
         <div>
-            Some text
+            {$username}
+            <img src={`https://avatars.dicebear.com/api/human/${$username}.svg`} alt="avatar">
         </div>
         <button on:click={signOut}>
             Sign out
@@ -44,5 +45,9 @@
         padding: .5rem;
         border-radius: .25rem;
         cursor: pointer;
+    }
+
+    img {
+        height: 2rem;
     }
 </style>

@@ -20,7 +20,7 @@ import { user, username } from "./gun";
         })
     }
 
-    let avatar = "https://avatars.dicebear.com/api/human/joe.svg"
+    
 
 </script>
 
