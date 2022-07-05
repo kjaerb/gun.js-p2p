@@ -1,40 +1,50 @@
 <script lang="ts">
+
     import { onMount } from 'svelte';
     import type { Writable } from 'svelte/store';
-    import ChatMessages from './ChatMessages.svelte';
+    import ChatMessage from './ChatMessage.svelte';
     import type { ChatMsg } from './lib/ChatInterface'
+    import 'gun/sea'
 
 
-    import { gun, chatDB } from './gun';
-    import { username } from './gun'
+    import { gun, chatDB, user } from './user';
+    import { username } from './user'
+    import { SEA } from 'gun';
 
     let newMsg = ""
-    let messages:ChatMsg[] = []
+    let messages = []
+
+    const key = "#foo"
 
     onMount(() => {
         chatDB.map()
               .once(async (data, id) => {
-                if (data) {
-                    let chatMsg:ChatMsg = {
-                        message: data.msg,
-                        author: data.author,
-                        timestamp: data.timestamp
+                if (data && data.msg != undefined) {
+                    let msg = {
+                        message: (await SEA.decrypt(data.msg, key)) + '',
+                        author: gun.user(data).get('alias'),
+                        timestamp: new Date(Gun.state.is(data, 'msg'))
                     }
 
-                    messages = [...messages.slice(-100), chatMsg]
+                    messages = [...messages.slice(-100), msg]
                 }
         })
+
     })
 
     async function sendMessage() {
-        let index = new Date().toISOString()
 
-        var message:ChatMsg = {
-            message: newMsg,
-            author: "me",
-            timestamp: index
-            
+        if(newMsg == "") {
+            console.log('no message')
+            return
         }
+
+        let index = new Date().toISOString()
+        let secret = await SEA.encrypt(newMsg, key)
+        let message = user.get('all').set({
+            msg: secret,
+        })
+
         chatDB.get(index).put(message)
         newMsg = ""
     }
@@ -42,15 +52,13 @@
 
 <div class="chat">
     <div class="chat-container">
-        <ul>
-            {#each messages as message}
-                <ChatMessages msg={message.message} author={message.author} timestamp={message.timestamp} />
-            {/each}
-        </ul>
+        {#each messages as message}
+            <ChatMessage msg={message.message} author={message.author._.put} timestamp={message.timestamp} />
+        {/each}
     </div>
     <form class="msg-box" on:submit|preventDefault={sendMessage}>
         <input type="text" name="message" placeholder="Type a message..." bind:value={newMsg}>
-        <button type="submit">Send</button>
+        <button type="submit">✉️</button>
     </form>
 </div>
 
@@ -66,7 +74,11 @@
     }
 
     .chat-container {
-
+        height: max-content;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        width: 100%;
     }
 
     .msg-box {
@@ -91,5 +103,7 @@
         margin: 0;
         border: none;
         width: 19%;
+        font-size: 1.25em;
+        background: rgb(0, 185, 0);
     }
 </style>

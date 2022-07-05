@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { user, username } from './gun'
+    import { user, username } from './user'
 
     export function signOut() {
         user.leave()

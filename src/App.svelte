@@ -1,7 +1,7 @@
 <script lang="ts">
     import Chat from './Chat.svelte';
     import Header from './Header.svelte'
-    import { username } from './gun'
+    import { username } from './user'
     import Login from './Login.svelte';
 </script>
 
@@ -34,6 +34,6 @@
 
   .container {
     height: 100vh;
-    width: 50%;
+    width: 768px;
   }
 </style>

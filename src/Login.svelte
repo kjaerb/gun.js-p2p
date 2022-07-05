@@ -1,5 +1,5 @@
 <script lang="ts">
-import { user, username } from "./gun";
+import { user, username } from "./user";
 
 
 
@@ -20,6 +20,11 @@ import { user, username } from "./gun";
         })
     }
 
+    function keyLogin(e:KeyboardEvent) {
+        if(e && e.keyCode == 13) {
+            login()
+        }
+    }
     
 
 </script>
@@ -29,8 +34,8 @@ import { user, username } from "./gun";
         Login to see chat
     </h1>
     <form>
-        <input type="text" name="username" placeholder="Username" bind:value={usernameInput}>
-        <input type="password" name="password" placeholder="Password" bind:value={passwordInput}>
+        <input type="text" name="username" placeholder="Username" bind:value={usernameInput} on:keypress={keyLogin}>
+        <input type="password" name="password" placeholder="Password" bind:value={passwordInput} on:keypress={keyLogin}>
     </form>
     <button on:click={login}>
         Login
