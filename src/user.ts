@@ -3,7 +3,10 @@ import { writable } from 'svelte/store'
 import 'gun/axe'
 import 'gun/sea'
 
-export const gun = GUN()
+
+export const gun = GUN([
+    'https://gun-js-p2p.vercel.app/gun'
+])
 
 export const chatDB = gun.get('chat-p2p')
 
